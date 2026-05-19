@@ -6,6 +6,23 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.0-alpha.1] - 2026-05-19
+
+### Fixed
+
+- Exclude `**/__tests__/**` from the TypeScript build so test mocks
+  (`better-call`, `better-auth-api`) no longer ship in the published
+  npm tarball. Reduces the package from 172 → 164 files and removes
+  test-only code from the consumer surface.
+
+### Internal
+
+- First publish via the tag-triggered GitHub Actions release workflow
+  (OIDC `--provenance --access public`). 0.1.0-alpha.0 was published
+  manually to bootstrap the package name on the npm registry.
+
+## [Pre-history]
+
 ### Added
 
 - Phase 0 scaffold: package.json, TS/Jest/ESLint/Prettier configs,
