@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["jest", "node"],
+    "module": "CommonJS",
+    "isolatedModules": false,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "jsx": "react-native",
+    "skipLibCheck": true
+  },
+  "include": [
+    "src",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/__tests__/**/*"
+  ]
+}

@@ -1,0 +1,11 @@
+build/
+node_modules/
+coverage/
+*.lock
+*.log
+.DS_Store
+.expo/
+ios/Pods/
+android/.gradle/
+android/build/
+android/app/build/
