@@ -15,7 +15,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
 
       - run: npm ci
 
@@ -32,16 +32,14 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
 
-      # Trusted-publisher tokenless OIDC needs npm 11.5+ (Node 22 ships
-      # with npm 10). Skip setup-node's `registry-url` because that
-      # writes `_authToken=${NODE_AUTH_TOKEN}` into .npmrc — and an
-      # empty token there overrides the OIDC flow.
-      - name: Upgrade npm for OIDC trusted-publisher support
-        run: |
-          npm install -g npm@11
-          npm --version
+      # Node 24 ships with npm 11 by default — needed for
+      # trusted-publisher tokenless OIDC publishing. We deliberately
+      # do NOT pass `registry-url` to setup-node above, because that
+      # writes `_authToken=${NODE_AUTH_TOKEN}` into .npmrc, and an
+      # empty token there overrides the OIDC tokenless flow.
+      - run: npm --version
 
       - run: npm ci
 
