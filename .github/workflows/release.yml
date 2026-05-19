@@ -35,10 +35,9 @@ jobs:
           node-version: 22
           registry-url: "https://registry.npmjs.org"
 
-      - name: Install npm 11.5.1+
-        run: npm install -g npm@latest
-
       - run: npm ci
 
       - name: Publish to npm
-        run: npm publish --provenance --access public
+        # --tag next: expo-module's prepublishOnly refuses prerelease versions
+        # without an explicit dist-tag. Matches publishConfig.tag in package.json.
+        run: npm publish --tag next --provenance --access public

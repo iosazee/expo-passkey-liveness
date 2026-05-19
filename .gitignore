@@ -56,3 +56,6 @@ yarn-error.log
 
 # Expo
 .expo/*
+
+# Internal design docs (not shipped to npm or GitHub)
+docs/
