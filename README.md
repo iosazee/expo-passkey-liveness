@@ -14,9 +14,9 @@ registration, authentication, and recovery flows so a stolen device
 unlock or a deepfake-injection attack cannot complete a sensitive
 WebAuthn ceremony on its own.
 
-> **🧪 v0.1.0-alpha**: API surface is stable but the package is in
-> alpha while we shake out provider integrations on real devices.
-> Pin exactly until 0.1.0 final.
+> **v0.1.0-alpha.1**: API surface is stable, the package publishes from
+> the tag-triggered OIDC workflow, and test-only files are excluded from
+> the npm tarball. Pin alpha releases exactly until 0.1.0 final.
 
 ## 📋 Table of Contents
 
@@ -50,9 +50,9 @@ adds:
 - A `hooks.before` enforcement layer that validates the token on
   `expo-passkey`'s register and authenticate calls and writes an
   audit slice into `passkey.metadata.liveness`.
-- Cross-platform clients (native + web) that orchestrate the camera
-  ceremony and pass the token through to `expo-passkey`'s existing
-  client methods.
+- Native clients that orchestrate the camera ceremony and pass the token
+  through to `expo-passkey`'s existing client methods. The web entrypoint
+  currently exports matching stubs that return `LIVENESS_NOT_SUPPORTED`.
 
 The two packages remain decoupled: `expo-passkey` consumers who don't
 install this extension are unaffected.
@@ -82,9 +82,9 @@ one that matches your trust model.
 
 | Mode | Server config | Token validation | Use when |
 |---|---|---|---|
-| **1. Standalone** | Plugin loaded, `required: "none"` | You call `verifyLivenessToken` yourself | Gating non-passkey flows (KYC, account deletion, high-value transfers) |
-| **2. Composed** | Plugin loaded, `required: "none"` | Client passes `livenessToken`; `expo-passkey` accepts it; app code decides when to gate | Most apps — your code holds the policy |
-| **3. Server-enforced** | `required: "register" \| "authenticate" \| "both"` | Hook validates before `expo-passkey` handler runs; fails closed | Strict environments where the server must enforce regardless of client |
+| **1. Standalone** | Plugin loaded for endpoints; choose any passkey `required` policy you also need | You call `verifyLivenessToken` yourself | Gating non-passkey flows (KYC, account deletion, high-value transfers) |
+| **2. Composed** | `required: "registration"`, `"authentication"`, or `"both"` | Client passes `livenessToken`; hook validates only the configured passkey ops | Most apps — server enforces the operations you mark sensitive |
+| **3. Server-enforced** | `required: "registration" \| "authentication" \| "both"` | Hook validates before `expo-passkey` handler runs; fails closed | Strict environments where the server must enforce regardless of client |
 
 Worked examples for each: [`docs/usage.md`](./docs/usage.md).
 
@@ -157,7 +157,7 @@ This exposes two new endpoints on the Better Auth handler:
 - `POST /expo-passkey/liveness/verify` — submits results and mints a
   signed `livenessToken`
 
-And — when `required` is `register`, `authenticate`, or `both` —
+And — when `required` is `registration`, `authentication`, or `both` —
 registers a `hooks.before` that validates the token on the matching
 `expo-passkey` endpoints.
 
@@ -212,23 +212,32 @@ import {
 } from "expo-passkey-liveness/native";
 
 await registerPasskeyWithLiveness(
-  { userName: "alice", displayName: "Alice" },
+  {
+    userId: user.id,
+    userName: "alice@example.com",
+    displayName: "Alice",
+    rpId: "my-app.com",
+    rpName: "My App",
+  },
   { fetcher, registerPasskey: authClient.registerPasskey }
 );
 
 await authenticateWithPasskeyAndLiveness(
-  {},
+  { rpId: "my-app.com" },
   { fetcher, authenticateWithPasskey: authClient.authenticateWithPasskey }
 );
 ```
 
 Web equivalents (`expo-passkey-liveness/web`) export the same symbols
-for browser flows that use platform authenticators.
+but currently return `LIVENESS_NOT_SUPPORTED`. To exercise the server
+pipeline from a browser today, use a demo `customProvider` and call the
+session/verify endpoints directly as shown in `epk-example-app`.
 
 ## Providers
 
-A provider abstracts the PAD vendor. Three built-in factories plus an
-identity adapter for self-hosted models.
+A provider abstracts the PAD vendor. The package ships Rekognition and
+iProov provider factories plus `customProvider` for self-hosted models
+or deterministic demos.
 
 ### `rekognitionProvider` — AWS Rekognition Face Liveness (iBeta PAD L1)
 
@@ -372,13 +381,14 @@ A full Next.js + Expo monorepo demo lives at
 [`epk-example-app`](https://github.com/iosazee/epk-example-app):
 
 - **Web** (`apps/web`) — Next.js + Better Auth backend that wires
-  both plugins, plus a `/test` page for the WebAuthn flow
-- **Mobile** (`apps/mobile`) — Expo SDK 55 app that runs the native
-  liveness ceremony against the same backend
+  both plugins, plus landing/login/dashboard flows for WebAuthn
+- **Mobile** (`apps/mobile`) — Expo SDK 55 app that wires the native
+  liveness wrappers against the same backend
 
 The web flow uses an auto-passing `customProvider` so you can see
 the full server pipeline without AWS / iProov credentials; the mobile
-app exercises the real camera ceremony.
+app can exercise the real camera ceremony after you switch the server
+and config plugin to a provider adapter such as Rekognition or iProov.
 
 ## Roadmap
 
