@@ -14,9 +14,10 @@ registration, authentication, and recovery flows so a stolen device
 unlock or a deepfake-injection attack cannot complete a sensitive
 WebAuthn ceremony on its own.
 
-> **v0.1.0-alpha.1**: API surface is stable, the package publishes from
-> the tag-triggered OIDC workflow, and test-only files are excluded from
-> the npm tarball. Pin alpha releases exactly until 0.1.0 final.
+> **v0.1.0-alpha.2**: Documentation now reflects the current alpha
+> integration, valid server enforcement modes, web-stub behavior, provider
+> setup, and the `epk-example-app` reference flow. Pin alpha releases exactly
+> until 0.1.0 final.
 
 ## 📋 Table of Contents
 

@@ -1,6 +1,6 @@
 {
   "name": "expo-passkey-liveness",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0-alpha.2",
   "description": "Optional liveness-detection extension for expo-passkey: face presentation-attack-detection (PAD) gating for registration, authentication, and recovery flows",
   "type": "module",
   "main": "build/index.js",

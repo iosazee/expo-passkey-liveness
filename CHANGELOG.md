@@ -6,6 +6,13 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.0-alpha.2] - 2026-05-20
+
+### Documentation
+
+- Clarify alpha integration docs, valid liveness enforcement modes, web stub
+  behavior, provider setup, and the current `epk-example-app` flow.
+
 ## [0.1.0-alpha.1] - 2026-05-19
 
 ### Fixed
